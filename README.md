@@ -9,7 +9,3 @@
 ## Execution
 This will start the server on `http://localhost:3000` or the `PORT` defined in the environment variables.
 >node app.js
-
-> npm install express body-parser
-## You can also use:
-> npm install i

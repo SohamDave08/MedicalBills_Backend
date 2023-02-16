@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const Joi = require('joi');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,19 +10,42 @@ app.use(bodyParser.json());
 let medicalData = [];
 
 app.get('/items', (req, res) => {
-    res.json(medicalData);
+    try {
+        res.json(medicalData);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error! Try again' });
+    }
 });
 
 app.post('/items', (req, res) => {
-    const data = {
-      patient_name: req.body.patient_name,
-      patient_address: req.body.patient_address,
-      hospital_name: req.body.hospital_name,
-      date_of_service: req.body.date_of_service,
-      bill_amount: req.body.bill_amount
-    };
-    medicalData.push(data);
-    res.status(201).json(data);
+
+    const data = Joi.object({
+        patient_name: Joi.string().required(),
+        patient_address: Joi.string().required(),
+        hospital_name: Joi.string().required(),
+        date_of_service: Joi.date().required(),
+        bill_amount: Joi.number().required()
+    });
+
+    try {
+        const { error, value } = data.validate(req.body);
+        if(error)
+        {
+            res.status(400)
+            .json({ message: error.details[0].message });
+        }
+        else
+        {
+            medicalData.push(value);
+            res.status(201).json(value);
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error! Try again' });
+    }
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
