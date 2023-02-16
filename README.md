@@ -9,3 +9,10 @@
 ## Execution
 This will start the server on `http://localhost:3000` or the `PORT` defined in the environment variables.
 >node app.js
+
+## Endpoints
+GET /items
+Returns a list of medical bills.
+
+POST /items
+Creates a new medical bill.
